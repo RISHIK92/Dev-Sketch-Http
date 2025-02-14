@@ -14,10 +14,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateRoomSchema = exports.SigninSchema = exports.CreateUserSchema = void 0;
 const express_1 = __importDefault(require("express"));
-// import { CreateUserSchema, SigninSchema, CreateRoomSchema } from "types";
-// import { prismaClient } from "@repo/db/client";
-const client_1 = require("@prisma/client");
-const prismaClient = new client_1.PrismaClient();
+const client_1 = __importDefault(require("@prisma/client"));
+const { PrismaClient } = client_1.default;
+const prismaClient = new PrismaClient();
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const middleware_1 = require("./middleware");
