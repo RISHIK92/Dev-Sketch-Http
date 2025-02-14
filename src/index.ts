@@ -85,46 +85,44 @@ app.post('/signup', async (req, res) => {
 });
 
 
-app.post('/signin', async (req,res) => {
-    const parsedData = SigninSchema.safeParse(req.body)
+app.post('/signin', async (req, res) => {
+    console.log('Signin request received:', req.body);
+    const parsedData = SigninSchema.safeParse(req.body);
     if (!parsedData.success) {
-        res.status(410).json({
-            msg: "Incorrect Inputs"
-        });
+        console.log('Invalid input:', parsedData.error);
+        res.status(410).json({ msg: "Incorrect Inputs" });
         return;
     }
+
     try {
         const user = await prismaClient.user.findFirst({
-            where: {
-                email: parsedData.data.username
-            }
-        })
+            where: { email: parsedData.data.username },
+        });
+
         if (!user || !user.password) {
-            res.status(411).json({ msg: "Invalid email or password"})
-            return
+            console.log('User not found');
+            res.status(411).json({ msg: "Invalid email or password" });
+            return;
         }
+
         const matchPassword = await bcrypt.compare(parsedData.data.password, user?.password);
-        console.log(user, matchPassword)
         if (!matchPassword) {
-            res.status(410).json({ msg: "Incorrect Password"})
+            console.log('Password mismatch');
+            res.status(410).json({ msg: "Incorrect Password" });
             return;
         }
 
         const userid = user.id;
-        const token = jwt.sign({
-            userid
-        }, JWT_SECRET)
+        const token = jwt.sign({ userid }, JWT_SECRET);
 
-        res.status(200).json({
-            token
-        })
+        console.log('JWT generated:', token);
+        res.status(200).json({ token });
     } catch (e) {
-        res.status(411).json({
-            msg: "User not found"
-        })
-        console.log(e);
+        console.log('Error during signin:', e);
+        res.status(411).json({ msg: "User not found" });
     }
-})
+});
+
 
 app.post('/room', middleware, async (req: Request,res: Response): Promise<void> => {
     const parsedData = CreateRoomSchema.safeParse(req.body);
