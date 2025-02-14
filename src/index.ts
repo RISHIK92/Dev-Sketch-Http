@@ -1,10 +1,9 @@
 import express from "express";
-// import { CreateUserSchema, SigninSchema, CreateRoomSchema } from "types";
-// import { prismaClient } from "@repo/db/client";
 
 import { PrismaClient } from "@prisma/client";
 
 const prismaClient = new PrismaClient();
+
 
 import { Request, Response } from 'express';
 import jwt from "jsonwebtoken";
