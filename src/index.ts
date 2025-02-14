@@ -29,7 +29,13 @@ export const CreateRoomSchema = z.object({
     name: z.string().min(3).max(20),
 })
 
+
 const app = express();
+
+app.use(cors({
+    origin: '*',  // Allow all origins (adjust this for more restrictive settings)
+}));
+
 
 declare global {
     namespace Express {
