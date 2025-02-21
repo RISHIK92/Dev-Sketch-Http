@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.middleware = middleware;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-// import { JWT_SECRET } from "@repo/backend-common/config";
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config({ path: './config.env' });
 const JWT_SECRET = process.env.JWT_SECRET || "123123";

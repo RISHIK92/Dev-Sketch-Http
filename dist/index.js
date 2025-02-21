@@ -35,6 +35,9 @@ exports.CreateRoomSchema = zod_1.z.object({
     name: zod_1.z.string().min(3).max(20),
 });
 const app = (0, express_1.default)();
+app.use((0, cors_1.default)({
+    origin: '*', // Allow all origins (adjust this for more restrictive settings)
+}));
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
 const dotenv_1 = __importDefault(require("dotenv"));
@@ -68,42 +71,36 @@ app.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 }));
 app.post('/signin', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('Signin request received:', req.body);
     const parsedData = exports.SigninSchema.safeParse(req.body);
     if (!parsedData.success) {
-        res.status(410).json({
-            msg: "Incorrect Inputs"
-        });
+        console.log('Invalid input:', parsedData.error);
+        res.status(410).json({ msg: "Incorrect Inputs" });
         return;
     }
     try {
         const user = yield prismaClient.user.findFirst({
-            where: {
-                email: parsedData.data.username
-            }
+            where: { email: parsedData.data.username },
         });
         if (!user || !user.password) {
+            console.log('User not found');
             res.status(411).json({ msg: "Invalid email or password" });
             return;
         }
         const matchPassword = yield bcrypt_1.default.compare(parsedData.data.password, user === null || user === void 0 ? void 0 : user.password);
-        console.log(user, matchPassword);
         if (!matchPassword) {
+            console.log('Password mismatch');
             res.status(410).json({ msg: "Incorrect Password" });
             return;
         }
         const userid = user.id;
-        const token = jsonwebtoken_1.default.sign({
-            userid
-        }, JWT_SECRET);
-        res.status(200).json({
-            token
-        });
+        const token = jsonwebtoken_1.default.sign({ userid }, JWT_SECRET);
+        console.log('JWT generated:', token);
+        res.status(200).json({ token });
     }
     catch (e) {
-        res.status(411).json({
-            msg: "User not found"
-        });
-        console.log(e);
+        console.log('Error during signin:', e);
+        res.status(411).json({ msg: "User not found" });
     }
 }));
 app.post('/room', middleware_1.middleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
