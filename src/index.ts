@@ -8,7 +8,7 @@ const prismaClient = new PrismaClient();
 
 import { Request, Response } from 'express';
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { middleware } from "./middleware";
 import cors from 'cors';
 
