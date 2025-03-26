@@ -18,7 +18,7 @@ const client_1 = __importDefault(require("@prisma/client"));
 const { PrismaClient } = client_1.default;
 const prismaClient = new PrismaClient();
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const bcrypt_1 = __importDefault(require("bcrypt"));
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const middleware_1 = require("./middleware");
 const cors_1 = __importDefault(require("cors"));
 const zod_1 = require("zod");
@@ -52,7 +52,7 @@ app.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         });
         return;
     }
-    const hashPassword = yield bcrypt_1.default.hash(parsedData.data.password, 10);
+    const hashPassword = yield bcryptjs_1.default.hash(parsedData.data.password, 10);
     try {
         const user = yield prismaClient.user.create({
             data: {
@@ -87,7 +87,7 @@ app.post('/signin', (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             res.status(411).json({ msg: "Invalid email or password" });
             return;
         }
-        const matchPassword = yield bcrypt_1.default.compare(parsedData.data.password, user === null || user === void 0 ? void 0 : user.password);
+        const matchPassword = yield bcryptjs_1.default.compare(parsedData.data.password, user === null || user === void 0 ? void 0 : user.password);
         if (!matchPassword) {
             console.log('Password mismatch');
             res.status(410).json({ msg: "Incorrect Password" });
